@@ -8,14 +8,12 @@ from keyforge.dataframes import SETS, HOUSES, set_house_df
 
 def plot_deck_overview(deck_df):
     """Plot number of decks per house/stat as heatmap"""
-
     plt.figure(figsize = (12,3))
     _ = sns.heatmap(set_house_df(deck_df), cmap="RdYlGn", annot=True, cbar=False)
 
 
 def plot_time_changes(match_df):
     """Plot changes in decks/matches over time"""
-
     _ , ax = plt.subplots(1, 4, figsize=(24,6))
 
     # Number of decks over time:
@@ -40,22 +38,20 @@ def plot_time_changes(match_df):
 
 def plot_match_results(match_hm):
     """Plot results of matches as heatmap"""
-
     plt.figure(figsize = (16,16))
     _ = sns.heatmap(match_hm, cmap="RdYlGn", square=True, annot=True, cbar=False)
 
 
 def plot_deck_stats(deck_df):
     """Plot deck stats as heatmap"""
-
     plt.figure(figsize = (10,10))
-    deck_labels = [f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()]
-    _ = sns.heatmap(deck_df.iloc[:,[7, 11, 12, 13]], yticklabels=deck_labels , cmap="RdYlGn", annot=True, fmt="g", cbar=False)
+    data = deck_df.iloc[:,[7, 11, 12, 13]]
+    labels = [f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()]
+    _ = sns.heatmap(data, yticklabels=labels, cmap="RdYlGn", annot=True, fmt="g", cbar=False)
 
 
 def plot_win_vs_sas(deck_df):
     """Plot for each deck win% vs SAS (color by set) + trendline"""
-
     _ , ax = plt.subplots(1, figsize=(10,6))
 
     # Plot data:
@@ -72,27 +68,22 @@ def plot_win_vs_sas(deck_df):
     p = np.poly1d(z)
     ax.plot(x, p(x), color="grey", linewidth=0.5)
 
-    plt.xlabel("SAS")
-    plt.ylabel("Win rate [%]")
-    ax.set_ylim(ymin=0, ymax=100)
-    plt.legend()
+    win_sas_plot_settings(ax)
     plt.show()
 
 
-def plot_set_heatmaps(set_df, set_plays_hm, set_wins_hm):
-    """Set heatmaps: stats - match plays - match win rates"""
+def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
+    """Group heatmaps: stats - match plays - match win rates"""
+    _ , (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(fig_length,6))
 
-    _ , (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(18,6))
-
-    filtered_df = set_df.iloc[:,[0, 1, 5, 6, 7, 8]]
+    filtered_df = group_df.iloc[:,[0, 1, 5, 6, 7, 8]]
     _ = sns.heatmap(filtered_df, cmap="RdYlGn", ax=ax1, square=True, annot=True, fmt="g", cbar=False)
-    _ = sns.heatmap(set_plays_hm, cmap="RdYlGn", ax=ax2, square=True, annot=True, fmt="g", cbar=False)
-    _ = sns.heatmap(set_wins_hm, cmap="RdYlGn", ax=ax3, square=True, annot=True, fmt="g", cbar=False)
+    _ = sns.heatmap(group_plays_hm, cmap="RdYlGn", ax=ax2, square=True, annot=True, fmt="g", cbar=False)
+    _ = sns.heatmap(group_wins_hm, cmap="RdYlGn", ax=ax3, square=True, annot=True, fmt="g", cbar=False)
 
 
 def plot_set_trends(set_df):
     """Set plots: Average win rates vs SAS - Changes in SAS overtime - Changes in win rate overtime"""
-
     _ , ax = plt.subplots(1, 3, figsize=(20,6))
 
     # Average win rates vs SAS (color by set):
@@ -102,12 +93,7 @@ def plot_set_trends(set_df):
         yerr = set_df.loc[deck_set, "std_deck_win_rate"]
         ax[0].scatter(x, y, c=SETS[deck_set], label = deck_set)
         ax[0].errorbar(x, y, yerr=yerr, fmt="-o", color=SETS[deck_set])
-
-    ax[0].set_xlabel("SAS")
-    ax[0].set_ylabel("Win rate [%]")
-    ax[0].set_xlim(xmin=50, xmax=80)
-    ax[0].set_ylim(ymin=0, ymax=100)
-    ax[0].legend()
+    win_sas_plot_settings(ax[0], xmin=50)
 
     # Changes in SAS overtime:
     ax[1].plot(set_df.index, set_df["avg_deck_sas"])
@@ -120,20 +106,8 @@ def plot_set_trends(set_df):
     _ = ax[2].set_ylim(ymin=20, ymax=80)
 
 
-def plot_house_heatmaps(house_df, house_plays_hm, house_wins_hm):
-    """House heatmaps: stast - match plays - match win rates"""
-
-    _ , (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22,6))
-
-    filtered_df = house_df.iloc[:,[0, 1, 5, 6, 7, 8]]
-    _ = sns.heatmap(filtered_df, cmap="RdYlGn", ax=ax1, square=True, annot=True, fmt="g", cbar=False)
-    _ = sns.heatmap(house_plays_hm, cmap="RdYlGn", ax=ax2, square=True, annot=True, fmt="g", cbar=False)
-    _ = sns.heatmap(house_wins_hm, cmap="RdYlGn", ax=ax3, square=True, annot=True, fmt="g", cbar=False)
-
-
 def plot_house_trends(house_df):
     """House plot: Average win rates vs SAS"""
-
     _ , ax = plt.subplots(1, 1, figsize=(15,5))
 
     for deck_house in HOUSES:
@@ -143,9 +117,15 @@ def plot_house_trends(house_df):
         ax.scatter(x, y, c=HOUSES[deck_house], label = deck_house)
         ax.errorbar(x, y, yerr=yerr, fmt="-o", color=HOUSES[deck_house])
 
+    win_sas_plot_settings(ax, xmin=60)
+    plt.show()
+
+
+def win_sas_plot_settings(ax, xmin=None):
+    """Misc settings for win rate Vs SAS plots"""
     ax.set_xlabel("SAS")
     ax.set_ylabel("Win rate [%]")
-    ax.set_xlim(xmin=60, xmax=80)
+    if xmin:
+        ax.set_xlim(xmin=xmin, xmax=80)
     ax.set_ylim(ymin=0, ymax=100)
     ax.legend()
-    plt.show()
