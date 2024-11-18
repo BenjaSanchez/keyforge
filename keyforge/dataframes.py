@@ -30,12 +30,12 @@ HOUSES = {
 }
 
 
-def deck_df(path="./decks.csv"):
+def deck_df(path="data/decks.csv"):
     """Dataframe with all deck information"""
     return pd.read_csv(path, index_col=0)
 
 
-def match_df(path="./matches.csv"):
+def match_df(path="data/matches.csv"):
     """Dataframe with all matches' information"""
     match_df = pd.read_csv(path)
     entry_dates = pd.to_datetime(deck_df()["entry_date"])
