@@ -93,7 +93,7 @@ def plot_set_trends(set_df):
         yerr = set_df.loc[deck_set, "std_deck_win_rate"]
         ax[0].scatter(x, y, c=SETS[deck_set], label = deck_set)
         ax[0].errorbar(x, y, yerr=yerr, fmt="-o", color=SETS[deck_set])
-    win_sas_plot_settings(ax[0], xmin=50)
+    win_sas_plot_settings(ax[0], xlim=[50, 80])
 
     # Changes in SAS overtime:
     ax[1].plot(set_df.index, set_df["avg_deck_sas"])
@@ -117,15 +117,15 @@ def plot_house_trends(house_df):
         ax.scatter(x, y, c=HOUSES[deck_house], label = deck_house)
         ax.errorbar(x, y, yerr=yerr, fmt="-o", color=HOUSES[deck_house])
 
-    win_sas_plot_settings(ax, xmin=60)
+    win_sas_plot_settings(ax, xlim=[60, 90])
     plt.show()
 
 
-def win_sas_plot_settings(ax, xmin=None):
+def win_sas_plot_settings(ax, xlim=None):
     """Misc settings for win rate Vs SAS plots"""
     ax.set_xlabel("SAS")
     ax.set_ylabel("Win rate [%]")
-    if xmin:
-        ax.set_xlim(xmin=xmin, xmax=80)
+    if xlim:
+        ax.set_xlim(xmin=xlim[0], xmax=xlim[1])
     ax.set_ylim(ymin=0, ymax=100)
     ax.legend()
