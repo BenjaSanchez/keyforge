@@ -1,6 +1,9 @@
 from matplotlib import pyplot as plt
+from plotly.subplots import make_subplots
 import numpy as np
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 import seaborn as sns
 
 from keyforge.dataframes import SETS, HOUSES, set_house_df
@@ -8,14 +11,14 @@ from keyforge.dataframes import SETS, HOUSES, set_house_df
 
 def plot_deck_overview(deck_df):
     """Plot number of decks per house/stat as heatmap"""
-    f = plt.figure(figsize = (12,3))
-    _ = sns.heatmap(set_house_df(deck_df), cmap="RdYlGn", annot=True, cbar=False)
-    return f
+    fig = px.imshow(set_house_df(deck_df), text_auto=True, color_continuous_scale="RdYlGn", width=700, height=500)
+    fig.update(layout_coloraxis_showscale=False)
+    return fig
 
 
 def plot_time_changes(match_df):
     """Plot changes in decks/matches over time"""
-    f , ax = plt.subplots(1, 4, figsize=(24,6))
+    fig , ax = plt.subplots(1, 4, figsize=(24,6))
 
     # Number of decks over time:
     ax[0].plot(pd.to_datetime(match_df["date"]), match_df["number_decks"])
@@ -35,63 +38,91 @@ def plot_time_changes(match_df):
     ax[3].plot(pd.to_datetime(match_df["date"]), match_df["perc_completion"])
     ax[3].set_ylabel("Cumulative percentage completion")
 
-    return f
+    return fig
 
 
 def plot_match_results(match_hm):
     """Plot results of matches as heatmap"""
-    f = plt.figure(figsize = (16,16))
-    _ = sns.heatmap(match_hm, cmap="RdYlGn", square=True, annot=True, cbar=False)
-    return f
+    fig = px.imshow(match_hm, text_auto=True, color_continuous_scale="RdYlGn", width=1400, height=1400)
+    fig.update(layout_coloraxis_showscale=False)
+    return fig
 
 
 def plot_deck_stats(deck_df):
     """Plot deck stats as heatmap"""
-    f = plt.figure(figsize = (10,10))
+    
     data = deck_df.iloc[:,[7, 11, 12, 13]]
-    labels = [f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()]
-    _ = sns.heatmap(data, yticklabels=labels, cmap="RdYlGn", annot=True, fmt="g", cbar=False)
-    return f
+    data.index = [f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()]
+    fig = px.imshow(data, text_auto=True, color_continuous_scale="RdYlGn", aspect="auto", width=900, height=1200)
+    fig.update(layout_coloraxis_showscale=False)
+    return fig
 
 
 def plot_win_vs_sas(deck_df):
     """Plot for each deck win% vs SAS (color by set) + trendline"""
-    f , ax = plt.subplots(1, figsize=(10,6))
 
     # Plot data:
-    for deck_set in SETS:
-        deck_sas = deck_df.loc[deck_df["set"] == deck_set, "SAS"]
-        deck_win_rate = deck_df.loc[deck_df["set"] == deck_set, "win_rate"]
-        set_data = ax.scatter(deck_sas, deck_win_rate, c=SETS[deck_set], label = deck_set, zorder = 10)
-        set_data.set_clip_on(False)
+    fig = px.scatter(
+        deck_df,
+        x="SAS",
+        y="win_rate",
+        color="set",
+        color_discrete_map=SETS,
+        size="plays",
+        hover_data=["name"],
+        width=800,
+        height=600,
+        template="simple_white"
+    )
 
     # Plot trendline + R2
     x = list(deck_df.loc[deck_df["win_rate"].notnull(), "SAS"])
     y = list(deck_df.loc[deck_df["win_rate"].notnull(), "win_rate"])
     z = np.polyfit(x, y, 1)
     p = np.poly1d(z)
-    ax.plot(x, p(x), color="grey", linewidth=0.5)
+    fig.add_scatter(
+        x=[min(x), max(x)],
+        y=[p(min(x)), p(max(x))],
+        mode="lines",
+        line={"color":"grey"},
+        showlegend=False
+    )
 
-    win_sas_plot_settings(ax)
-
-    return f
+    # Plot formatting
+    fig.update_xaxes(title_text="SAS", mirror="allticks")
+    fig.update_yaxes(title_text="Win rate [%]", range=[0, 100], mirror="allticks")
+    
+    return fig
 
 
 def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
     """Group heatmaps: stats - match plays - match win rates"""
-    f , (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(fig_length,6))
+    fig , (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(fig_length,6))
 
     filtered_df = group_df.iloc[:,[0, 1, 5, 6, 7, 8]]
     _ = sns.heatmap(filtered_df, cmap="RdYlGn", ax=ax1, square=True, annot=True, fmt="g", cbar=False)
     _ = sns.heatmap(group_plays_hm, cmap="RdYlGn", ax=ax2, square=True, annot=True, fmt="g", cbar=False)
     _ = sns.heatmap(group_wins_hm, cmap="RdYlGn", ax=ax3, square=True, annot=True, fmt="g", cbar=False)
+    
+    # fig = make_subplots(rows=1, cols=3)
+    # fig.update_layout(autosize=False, width=1500, height=500)
 
-    return f
+    # for idx, df in enumerate((filtered_df, group_plays_hm, group_wins_hm)):
+    #     fig.add_trace(
+    #         px.imshow(df[::-1], text_auto=True, color_continuous_scale="YlGnBu").data[0],
+    #         row=1,
+    #         col=idx+1
+    #     )
+    
+    # fig.update_traces(colorscale="YlGnBu")
+    # fig.update_layout(coloraxis_showscale=False)
+
+    return fig
 
 
 def plot_set_trends(set_df):
     """Set plots: Average win rates vs SAS - Changes in SAS overtime - Changes in win rate overtime"""
-    f , ax = plt.subplots(1, 3, figsize=(20,6))
+    fig , ax = plt.subplots(1, 3, figsize=(20,6))
 
     # Average win rates vs SAS (color by set):
     for deck_set in SETS:
@@ -112,12 +143,12 @@ def plot_set_trends(set_df):
     ax[2].set_ylabel("Win rate [%]")
     _ = ax[2].set_ylim(ymin=20, ymax=80)
 
-    return f
+    return fig
 
 
 def plot_house_trends(house_df):
     """House plot: Average win rates vs SAS"""
-    f , ax = plt.subplots(1, 1, figsize=(15,5))
+    fig , ax = plt.subplots(1, 1, figsize=(15,5))
 
     for deck_house in HOUSES:
         x = house_df.loc[deck_house, "avg_deck_sas"]
@@ -128,7 +159,7 @@ def plot_house_trends(house_df):
 
     win_sas_plot_settings(ax, xlim=[60, 90])
 
-    return f
+    return fig
 
 
 def win_sas_plot_settings(ax, xlim=None):
@@ -139,4 +170,3 @@ def win_sas_plot_settings(ax, xlim=None):
         ax.set_xlim(xmin=xlim[0], xmax=xlim[1])
     ax.set_ylim(ymin=0, ymax=100)
     ax.legend()
-    
