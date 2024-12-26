@@ -108,25 +108,29 @@ def plot_win_vs_sas(deck_df):
 
 def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
     """Group heatmaps: stats - match plays - match win rates"""
-    fig , (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(fig_length,6))
+    fig = make_subplots(rows=1, cols=3, horizontal_spacing=0.08)
 
+    # Filter first heatmap:
     filtered_df = group_df.iloc[:,[0, 1, 5, 6, 7, 8]]
-    _ = sns.heatmap(filtered_df, cmap="RdYlGn", ax=ax1, square=True, annot=True, fmt="g", cbar=False)
-    _ = sns.heatmap(group_plays_hm, cmap="RdYlGn", ax=ax2, square=True, annot=True, fmt="g", cbar=False)
-    _ = sns.heatmap(group_wins_hm, cmap="RdYlGn", ax=ax3, square=True, annot=True, fmt="g", cbar=False)
-    
-    # fig = make_subplots(rows=1, cols=3)
-    # fig.update_layout(autosize=False, width=1500, height=500)
 
-    # for idx, df in enumerate((filtered_df, group_plays_hm, group_wins_hm)):
-    #     fig.add_trace(
-    #         px.imshow(df[::-1], text_auto=True, color_continuous_scale="YlGnBu").data[0],
-    #         row=1,
-    #         col=idx+1
-    #     )
-    
-    # fig.update_traces(colorscale="YlGnBu")
-    # fig.update_layout(coloraxis_showscale=False)
+    # Plot heatmaps:
+    for idx, df in enumerate([filtered_df, group_plays_hm, group_wins_hm]):
+        fig.add_trace(go.Heatmap(
+            z=df[::-1].values,
+            x=df[::-1].columns,
+            y=df[::-1].index,
+            colorscale="RdYlGn",
+            showscale=False,
+            text=df[::-1].values,
+            texttemplate="%{text}",
+        ), row=1, col=idx+1)
+
+    # Adjust layout for subplots
+    fig.update_layout(
+        height=600,  # fixed height
+        width=fig_length,  # dynamic length
+        template="plotly_white"
+    )
 
     return fig
 
