@@ -1,9 +1,8 @@
-from matplotlib import pyplot as plt
-from plotly.subplots import make_subplots
+import math
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import seaborn as sns
+import plotly.subplots as sp
 
 from keyforge.dataframes import SETS, HOUSES, set_house_df
 
@@ -17,7 +16,7 @@ def plot_deck_overview(deck_df):
 
 def plot_time_changes(match_df):
     """Plot changes in decks/matches over time"""
-    fig = make_subplots(rows=1, cols=4, horizontal_spacing=0.08)
+    fig = sp.make_subplots(rows=1, cols=4, horizontal_spacing=0.08)
 
     # Year for each match:
     years = [int(d[0:4]) for d in match_df["date"]]
@@ -99,7 +98,7 @@ def plot_win_vs_sas(deck_df):
         showlegend=False
     )
 
-    # Plot formatting
+    # Customize plot:
     fig.update_xaxes(title_text="SAS", mirror="allticks")
     fig.update_yaxes(title_text="Win rate [%]", range=[0, 100], mirror="allticks")
     
@@ -108,7 +107,7 @@ def plot_win_vs_sas(deck_df):
 
 def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
     """Group heatmaps: stats - match plays - match win rates"""
-    fig = make_subplots(rows=1, cols=3, horizontal_spacing=0.08)
+    fig = sp.make_subplots(rows=1, cols=3, horizontal_spacing=0.08)
 
     # Filter first heatmap:
     filtered_df = group_df.iloc[:,[0, 1, 5, 6, 7, 8]]
@@ -125,11 +124,57 @@ def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
             texttemplate="%{text}",
         ), row=1, col=idx+1)
 
-    # Adjust layout for subplots
+    # Customize plot:
     fig.update_layout(
         height=600,  # fixed height
         width=fig_length,  # dynamic length
-        template="plotly_white"
+        template="simple_white"
+    )
+
+    return fig
+
+
+def plot_house_trends(house_df):
+    """House plot: Average win rates vs SAS"""
+    fig = go.Figure()
+
+    # Add values one house at a time:
+    for deck_house in HOUSES:
+        x = house_df.loc[deck_house, "avg_deck_sas"]
+        y = house_df.loc[deck_house, "avg_deck_win_rate"]
+        yerr = house_df.loc[deck_house, "std_deck_win_rate"]
+        
+        # Add scatter plot:
+        fig.add_trace(go.Scatter(
+            x=[x],
+            y=[y],
+            mode="markers",
+            marker=dict(color=HOUSES[deck_house]),
+            name=f"{deck_house}",
+            hovertemplate=(
+                f"<b>House:</b> {deck_house}<br>"
+                f"<b>SAS:</b> {x}<br>"
+                f"<b>Win Rate:</b> {y}%<br>"
+            )
+        ))
+
+        # Add error bars:
+        fig.add_trace(go.Scatter(
+            x=[x, x],
+            y=[y - yerr, y + yerr],
+            mode="lines",
+            line=dict(color=HOUSES[deck_house]),
+            showlegend=False
+        ))
+
+    # Customize plot:
+    fig.update_xaxes(title_text="SAS", range=[60, 90], mirror="allticks")
+    fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks")
+    fig.update_layout(
+        height=500,
+        width=1200,
+        legend_title_text="Houses",
+        template="simple_white"
     )
 
     return fig
@@ -137,51 +182,70 @@ def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
 
 def plot_set_trends(set_df):
     """Set plots: Average win rates vs SAS - Changes in SAS overtime - Changes in win rate overtime"""
-    fig , ax = plt.subplots(1, 3, figsize=(20,6))
+    fig = sp.make_subplots(rows=1, cols=3, horizontal_spacing=0.08)
 
     # Average win rates vs SAS (color by set):
     for deck_set in SETS:
         x = set_df.loc[deck_set, "avg_deck_sas"]
         y = set_df.loc[deck_set, "avg_deck_win_rate"]
         yerr = set_df.loc[deck_set, "std_deck_win_rate"]
-        ax[0].scatter(x, y, c=SETS[deck_set], label = deck_set)
-        ax[0].errorbar(x, y, yerr=yerr, fmt="-o", color=SETS[deck_set])
-    win_sas_plot_settings(ax[0], xlim=[50, 80])
+
+        fig.add_trace(go.Scatter(
+            x=[x],
+            y=[y],
+            mode="markers",
+            marker=dict(color=SETS[deck_set]),
+            name=f"{deck_set}",
+            hovertemplate=(
+                f"<b>Set:</b> {deck_set}<br>"
+                f"<b>SAS:</b> {x}<br>"
+                f"<b>Win Rate:</b> {y}%<extra></extra>"
+            )
+        ), row=1, col=1)
+
+        fig.add_trace(go.Scatter(
+            x=[x, x],
+            y=[y - yerr, y + yerr],
+            mode="lines",
+            line=dict(color=SETS[deck_set]),
+            showlegend=False
+        ), row=1, col=1)
 
     # Changes in SAS overtime:
-    ax[1].plot(set_df.index, set_df["avg_deck_sas"])
-    ax[1].set_ylabel("SAS")
-    ax[1].set_ylim(ymin=50, ymax=80)
+    fig.add_trace(go.Scatter(
+        x=set_df.index,
+        y=set_df["avg_deck_sas"],
+        mode="lines",
+        name="Avg SAS Over Time",
+        line=dict(color="blue"),
+        hovertemplate=(
+            "<b>Time:</b> %{x}<br>"
+            "<b>Avg SAS:</b> %{y}<extra></extra>"
+        ),
+        showlegend=False
+    ), row=1, col=2)
 
     # Changes in win rate overtime:
-    ax[2].plot(set_df.index, set_df["win_rate"])
-    ax[2].set_ylabel("Win rate [%]")
-    _ = ax[2].set_ylim(ymin=20, ymax=80)
+    fig.add_trace(go.Scatter(
+        x=set_df.index,
+        y=set_df["win_rate"],
+        mode="lines",
+        name="Win Rate Over Time",
+        line=dict(color="green"),
+        hovertemplate=(
+            "<b>Time:</b> %{x}<br>"
+            "<b>Win Rate:</b> %{y}%<extra></extra>"
+        ),
+        showlegend=False
+    ), row=1, col=3)
+
+    # Customize plots:
+    fig.update_xaxes(title_text="SAS", range=[50, 80], mirror="allticks", row=1, col=1)
+    fig.update_xaxes(mirror="allticks", row=1, col=2)
+    fig.update_xaxes(mirror="allticks", row=1, col=3)
+    fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks", row=1, col=1)
+    fig.update_yaxes(title_text="SAS", range=[50, 80], mirror="allticks", row=1, col=2)
+    fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks", row=1, col=3)
+    fig.update_layout(height=600, width=1500, legend_title_text="Sets", template="simple_white")
 
     return fig
-
-
-def plot_house_trends(house_df):
-    """House plot: Average win rates vs SAS"""
-    fig , ax = plt.subplots(1, 1, figsize=(15,5))
-
-    for deck_house in HOUSES:
-        x = house_df.loc[deck_house, "avg_deck_sas"]
-        y = house_df.loc[deck_house, "avg_deck_win_rate"]
-        yerr = house_df.loc[deck_house, "std_deck_win_rate"]
-        ax.scatter(x, y, c=HOUSES[deck_house], label = deck_house)
-        ax.errorbar(x, y, yerr=yerr, fmt="-o", color=HOUSES[deck_house])
-
-    win_sas_plot_settings(ax, xlim=[60, 90])
-
-    return fig
-
-
-def win_sas_plot_settings(ax, xlim=None):
-    """Misc settings for win rate Vs SAS plots"""
-    ax.set_xlabel("SAS")
-    ax.set_ylabel("Win rate [%]")
-    if xlim:
-        ax.set_xlim(xmin=xlim[0], xmax=xlim[1])
-    ax.set_ylim(ymin=0, ymax=100)
-    ax.legend()
