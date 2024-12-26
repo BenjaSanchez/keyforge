@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 from plotly.subplots import make_subplots
 import numpy as np
-import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
@@ -18,25 +17,37 @@ def plot_deck_overview(deck_df):
 
 def plot_time_changes(match_df):
     """Plot changes in decks/matches over time"""
-    fig , ax = plt.subplots(1, 4, figsize=(24,6))
+    fig = make_subplots(rows=1, cols=4, horizontal_spacing=0.08)
 
-    # Number of decks over time:
-    ax[0].plot(pd.to_datetime(match_df["date"]), match_df["number_decks"])
-    ax[0].set_ylabel("Number of decks owned")
-
-    # Cumulative distribution over time:
-    ax[1].plot(pd.to_datetime(match_df["date"]), match_df["cumulative_matches"])
-    ax[1].set_ylabel("Cumulative number of matches")
-
-    # Matches per year:
+    # Year for each match:
     years = [int(d[0:4]) for d in match_df["date"]]
-    ax[2].hist(years, bins=len(set(years)), range=[min(years)-0.5,max(years)+0.5], rwidth=0.6, align="mid")
-    ax[2].set_ylabel("Number of matches")
-    ax[2].set_xlim(xmin=min(years)-0.5, xmax=max(years)+0.5)
 
-    # Cumulative percentage completion over time:
-    ax[3].plot(pd.to_datetime(match_df["date"]), match_df["perc_completion"])
-    ax[3].set_ylabel("Cumulative percentage completion")
+    # Plots:
+    fig.add_trace(go.Scatter(x=match_df["time"], y=match_df["number_decks"]), row=1, col=1)
+    fig.add_trace(go.Histogram(x=years), row=1, col=2)
+    fig.add_trace(go.Scatter(x=match_df["time"], y=match_df["cumulative_matches"]), row=1, col=3)
+    fig.add_trace(go.Scatter(x=match_df["time"], y=match_df["perc_completion"]), row=1, col=4)
+
+    # Style axes:
+    ticks = list(set(years))
+    axis_labels = [
+        "Number of owned decks",
+        "Number of matches",
+        "Cumulative number of matches",
+        "Cumulative percentage completion"
+    ]
+    for idx, txt in enumerate(axis_labels):
+        fig.update_xaxes(tickvals = ticks, ticktext = ticks, mirror="allticks", row=1, col=idx+1)
+        fig.update_yaxes(title_text=txt, mirror="allticks", row=1, col=idx+1)
+
+    # Misc styling:
+    fig.update_layout(
+        autosize=False,
+        width=1500,
+        height=500,
+        template="simple_white",
+        showlegend=False
+    )
 
     return fig
 

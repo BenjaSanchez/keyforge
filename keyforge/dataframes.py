@@ -43,7 +43,8 @@ def match_df(path="data/matches.csv"):
     # Add new columns to match df:
     for idx in match_df.index:
         cumulative_matches = idx + 1
-        num_decks = sum([pd.to_datetime(match_df.loc[idx, "date"]) >= d for d in entry_dates])
+        match_df.loc[idx, "time"] = pd.to_datetime(match_df.loc[idx, "date"])
+        num_decks = sum([match_df.loc[idx, "time"] >= d for d in entry_dates])
         possible_matches = num_decks * (num_decks - 1) / 2
         match_df.loc[idx, "cumulative_matches"] = int(cumulative_matches)
         match_df.loc[idx, "number_decks"] = int(num_decks)
