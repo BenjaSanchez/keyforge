@@ -143,18 +143,20 @@ def plot_house_trends(house_df):
         x = house_df.loc[deck_house, "avg_deck_sas"]
         y = house_df.loc[deck_house, "avg_deck_win_rate"]
         yerr = house_df.loc[deck_house, "std_deck_win_rate"]
-        
-        # Add scatter plot:
+        plays = int(house_df.loc[deck_house, "plays"])
+
+        # Add data:
         fig.add_trace(go.Scatter(
             x=[x],
             y=[y],
             mode="markers",
-            marker=dict(color=HOUSES[deck_house]),
+            marker=dict(color=HOUSES[deck_house], size=math.sqrt(plays)),
             name=f"{deck_house}",
             hovertemplate=(
                 f"<b>House:</b> {deck_house}<br>"
                 f"<b>SAS:</b> {x}<br>"
                 f"<b>Win Rate:</b> {y}%<br>"
+                f"<b>Plays:</b> {plays}<extra></extra>"
             )
         ))
 
@@ -190,19 +192,25 @@ def plot_set_trends(set_df):
         y = set_df.loc[deck_set, "avg_deck_win_rate"]
         yerr = set_df.loc[deck_set, "std_deck_win_rate"]
 
+        # Scale plays with sqrt() function:
+        set_df.loc[deck_set, "scaled_plays"] = math.sqrt(set_df.loc[deck_set, "plays"])
+
+        # Add data:
         fig.add_trace(go.Scatter(
             x=[x],
             y=[y],
             mode="markers",
-            marker=dict(color=SETS[deck_set]),
+            marker=dict(color=SETS[deck_set], size=set_df.loc[deck_set, "scaled_plays"]),
             name=f"{deck_set}",
             hovertemplate=(
                 f"<b>Set:</b> {deck_set}<br>"
                 f"<b>SAS:</b> {x}<br>"
-                f"<b>Win Rate:</b> {y}%<extra></extra>"
+                f"<b>Win Rate:</b> {y}%<br>"
+                f"<b>Plays:</b> {int(set_df.loc[deck_set, 'plays'])}<extra></extra>"
             )
         ), row=1, col=1)
 
+        # Add error bars:
         fig.add_trace(go.Scatter(
             x=[x, x],
             y=[y - yerr, y + yerr],
@@ -215,11 +223,11 @@ def plot_set_trends(set_df):
     fig.add_trace(go.Scatter(
         x=set_df.index,
         y=set_df["avg_deck_sas"],
-        mode="lines",
         name="Avg SAS Over Time",
         line=dict(color="blue"),
+        marker=dict(color="blue", opacity=1, size=set_df["scaled_plays"]),
         hovertemplate=(
-            "<b>Time:</b> %{x}<br>"
+            "<b>Set:</b> %{x}<br>"
             "<b>Avg SAS:</b> %{y}<extra></extra>"
         ),
         showlegend=False
@@ -229,9 +237,9 @@ def plot_set_trends(set_df):
     fig.add_trace(go.Scatter(
         x=set_df.index,
         y=set_df["win_rate"],
-        mode="lines",
         name="Win Rate Over Time",
         line=dict(color="green"),
+        marker=dict(color="green", opacity=1, size=set_df["scaled_plays"]),
         hovertemplate=(
             "<b>Time:</b> %{x}<br>"
             "<b>Win Rate:</b> %{y}%<extra></extra>"
