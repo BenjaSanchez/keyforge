@@ -9,8 +9,15 @@ from keyforge.dataframes import SETS, HOUSES, set_house_df
 
 def plot_deck_overview(deck_df):
     """Plot number of decks per house/stat as heatmap"""
-    fig = px.imshow(set_house_df(deck_df), text_auto=True, color_continuous_scale="RdYlGn", width=700, height=500)
+    fig = px.imshow(
+        set_house_df(deck_df),
+        text_auto=True,
+        color_continuous_scale="RdYlGn",
+        width=800,
+        height=600
+    )
     fig.update(layout_coloraxis_showscale=False)
+    fig.update_traces(hovertemplate="<b>Set:</b> %{y}<br><b>House:</b> %{x}<extra></extra>")
     return fig
 
 
@@ -22,10 +29,37 @@ def plot_time_changes(match_df):
     years = [int(d[0:4]) for d in match_df["date"]]
 
     # Plots:
-    fig.add_trace(go.Scatter(x=match_df["time"], y=match_df["number_decks"]), row=1, col=1)
-    fig.add_trace(go.Histogram(x=years), row=1, col=2)
-    fig.add_trace(go.Scatter(x=match_df["time"], y=match_df["cumulative_matches"]), row=1, col=3)
-    fig.add_trace(go.Scatter(x=match_df["time"], y=match_df["perc_completion"]), row=1, col=4)
+    fig.add_trace(go.Scatter(
+        x=match_df["time"],
+        y=match_df["number_decks"],
+        hovertemplate=(
+            "<b>Date:</b> %{x}<br>"
+            "<b>Number of decks:</b> %{y}<extra></extra>"
+            )
+    ), row=1, col=1)
+    fig.add_trace(go.Histogram(
+        x=years,
+        hovertemplate=(
+            "<b>Year:</b> %{x}<br>"
+            "<b>Number of matches:</b> %{y}<extra></extra>"
+        )
+    ), row=1, col=2)
+    fig.add_trace(go.Scatter(
+        x=match_df["time"],
+        y=match_df["cumulative_matches"],
+        hovertemplate=(
+            "<b>Date:</b> %{x}<br>"
+            "<b>Cumulative matches:</b> %{y}<extra></extra>"
+        )
+    ), row=1, col=3)
+    fig.add_trace(go.Scatter(
+        x=match_df["time"],
+        y=match_df["perc_completion"],
+        hovertemplate=(
+            "<b>Date:</b> %{x}<br>"
+            "<b>Percentage completion:</b> %{y}%<extra></extra>"
+        )
+    ), row=1, col=4)
 
     # Style axes:
     ticks = list(set(years))
@@ -43,7 +77,7 @@ def plot_time_changes(match_df):
     fig.update_layout(
         autosize=False,
         width=1500,
-        height=500,
+        height=600,
         template="simple_white",
         showlegend=False
     )
@@ -53,8 +87,9 @@ def plot_time_changes(match_df):
 
 def plot_match_results(match_hm):
     """Plot results of matches as heatmap"""
-    fig = px.imshow(match_hm, text_auto=True, color_continuous_scale="RdYlGn", width=1400, height=1400)
+    fig = px.imshow(match_hm, text_auto=True, color_continuous_scale="RdYlGn", width=1500, height=1500)
     fig.update(layout_coloraxis_showscale=False)
+    fig.update_traces(hovertemplate="<b>Keys forged by:</b> %{y}<br><b>Against:</b> %{x}<extra></extra>")
     return fig
 
 
@@ -62,9 +97,19 @@ def plot_deck_stats(deck_df):
     """Plot deck stats as heatmap"""
     
     data = deck_df.iloc[:,[7, 11, 12, 13]]
-    data.index = [f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()]
-    fig = px.imshow(data, text_auto=True, color_continuous_scale="RdYlGn", aspect="auto", width=900, height=1200)
+    data.index = [
+        f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()
+    ]
+    fig = px.imshow(
+        data,
+        text_auto=True,
+        color_continuous_scale="RdYlGn",
+        aspect="auto",
+        width=900,
+        height=1200
+    )
     fig.update(layout_coloraxis_showscale=False)
+    fig.update_traces(hovertemplate="Deck %{y}<br>Parameter: %{x}<extra></extra>")
     return fig
 
 
@@ -95,7 +140,8 @@ def plot_win_vs_sas(deck_df):
         y=[p(min(x)), p(max(x))],
         mode="lines",
         line={"color":"grey"},
-        showlegend=False
+        showlegend=False,
+        hoverinfo='skip'
     )
 
     # Customize plot:
@@ -105,7 +151,7 @@ def plot_win_vs_sas(deck_df):
     return fig
 
 
-def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
+def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm):
     """Group heatmaps: stats - match plays - match win rates"""
     fig = sp.make_subplots(rows=1, cols=3, horizontal_spacing=0.08)
 
@@ -122,13 +168,17 @@ def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm, fig_length):
             showscale=False,
             text=df[::-1].values,
             texttemplate="%{text}",
+            hovertemplate=(
+                "<b>row:</b> %{y}<br>"
+                "<b>column:</b> %{x}<extra></extra>"
+            )
         ), row=1, col=idx+1)
 
     # Customize plot:
     fig.update_layout(
-        height=600,  # fixed height
-        width=fig_length,  # dynamic length
-        template="simple_white"
+        height=600,
+        width=1500,
+        template="none"
     )
 
     return fig
@@ -166,14 +216,15 @@ def plot_house_trends(house_df):
             y=[y - yerr, y + yerr],
             mode="lines",
             line=dict(color=HOUSES[deck_house]),
-            showlegend=False
+            showlegend=False,
+            hoverinfo='skip'
         ))
 
     # Customize plot:
     fig.update_xaxes(title_text="SAS", range=[60, 90], mirror="allticks")
     fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks")
     fig.update_layout(
-        height=500,
+        height=600,
         width=1200,
         legend_title_text="Houses",
         template="simple_white"
@@ -216,7 +267,8 @@ def plot_set_trends(set_df):
             y=[y - yerr, y + yerr],
             mode="lines",
             line=dict(color=SETS[deck_set]),
-            showlegend=False
+            showlegend=False,
+            hoverinfo='skip'
         ), row=1, col=1)
 
     # Changes in SAS overtime:
@@ -241,8 +293,8 @@ def plot_set_trends(set_df):
         line=dict(color="green"),
         marker=dict(color="green", opacity=1, size=set_df["scaled_plays"]),
         hovertemplate=(
-            "<b>Time:</b> %{x}<br>"
-            "<b>Win Rate:</b> %{y}%<extra></extra>"
+            "<b>Set:</b> %{x}<br>"
+            "<b>Avg Win Rate:</b> %{y}%<extra></extra>"
         ),
         showlegend=False
     ), row=1, col=3)
