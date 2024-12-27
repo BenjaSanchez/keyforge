@@ -70,17 +70,11 @@ def plot_time_changes(match_df):
         "Cumulative percentage completion"
     ]
     for idx, txt in enumerate(axis_labels):
-        fig.update_xaxes(tickvals = ticks, ticktext = ticks, mirror="allticks", row=1, col=idx+1)
-        fig.update_yaxes(title_text=txt, mirror="allticks", row=1, col=idx+1)
+        fig.update_xaxes(tickvals = ticks, ticktext = ticks, row=1, col=idx+1)
+        scatter_settings(fig, ylabel=txt, column=idx+1)
 
     # Misc styling:
-    fig.update_layout(
-        autosize=False,
-        width=1500,
-        height=600,
-        template="simple_white",
-        showlegend=False
-    )
+    fig.update_layout(autosize=False, width=1500, height=600, showlegend=False)
 
     return fig
 
@@ -89,7 +83,10 @@ def plot_match_results(match_hm):
     """Plot results of matches as heatmap"""
     fig = px.imshow(match_hm, text_auto=True, color_continuous_scale="RdYlGn", width=1500, height=1500)
     fig.update(layout_coloraxis_showscale=False)
-    fig.update_traces(hovertemplate="<b>Keys forged by:</b> %{y}<br><b>Against:</b> %{x}<extra></extra>")
+    fig.update_traces(hovertemplate=(
+        "<b>Keys forged by:</b> %{y}<br>"
+        "<b>Against:</b> %{x}<extra></extra>"
+    ))
     return fig
 
 
@@ -126,8 +123,7 @@ def plot_win_vs_sas(deck_df):
         size="plays",
         hover_data=["name"],
         width=800,
-        height=600,
-        template="simple_white"
+        height=600
     )
 
     # Plot trendline + R2
@@ -145,9 +141,8 @@ def plot_win_vs_sas(deck_df):
     )
 
     # Customize plot:
-    fig.update_xaxes(title_text="SAS", mirror="allticks")
-    fig.update_yaxes(title_text="Win rate [%]", range=[0, 100], mirror="allticks")
-    
+    scatter_settings(fig, xlabel="SAS", ylabel="Win rate [%]", yrange=[0, 100], column=None)
+
     return fig
 
 
@@ -175,11 +170,7 @@ def plot_group_heatmaps(group_df, group_plays_hm, group_wins_hm):
         ), row=1, col=idx+1)
 
     # Customize plot:
-    fig.update_layout(
-        height=600,
-        width=1500,
-        template="none"
-    )
+    fig.update_layout(height=600, width=1500, template="none")
 
     return fig
 
@@ -221,14 +212,8 @@ def plot_house_trends(house_df):
         ))
 
     # Customize plot:
-    fig.update_xaxes(title_text="SAS", range=[60, 90], mirror="allticks")
-    fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks")
-    fig.update_layout(
-        height=600,
-        width=1200,
-        legend_title_text="Houses",
-        template="simple_white"
-    )
+    fig.update_layout(height=600, width=1200, legend_title_text="Houses")
+    scatter_settings(fig, xlabel="SAS", xrange=[60, 90], ylabel="Win Rate [%]", yrange=[0, 100])
 
     return fig
 
@@ -300,12 +285,25 @@ def plot_set_trends(set_df):
     ), row=1, col=3)
 
     # Customize plots:
-    fig.update_xaxes(title_text="SAS", range=[50, 80], mirror="allticks", row=1, col=1)
-    fig.update_xaxes(mirror="allticks", row=1, col=2)
-    fig.update_xaxes(mirror="allticks", row=1, col=3)
-    fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks", row=1, col=1)
-    fig.update_yaxes(title_text="SAS", range=[50, 80], mirror="allticks", row=1, col=2)
-    fig.update_yaxes(title_text="Win Rate [%]", range=[0, 100], mirror="allticks", row=1, col=3)
-    fig.update_layout(height=600, width=1500, legend_title_text="Sets", template="simple_white")
+    fig.update_layout(height=600, width=1500, legend_title_text="Sets")
+    scatter_settings(fig, xlabel="SAS", xrange=[50, 80], ylabel="Win Rate [%]", yrange=[0, 100], column=1)
+    scatter_settings(fig, ylabel="SAS", yrange=[50, 80], column=2)
+    scatter_settings(fig, ylabel="Win Rate [%]", yrange=[0, 100], column=3)
 
     return fig
+
+
+def scatter_settings(fig, xlabel=None, xrange=None, ylabel=None, yrange=None, column=None):
+    """Miscelaneous settings for scatter plots"""
+    fig.update_layout(template="simple_white")
+    s = f", row=1, col={column}" if column else ""
+    eval(f"fig.update_yaxes(mirror='allticks'{s})")
+    eval(f"fig.update_xaxes(mirror='allticks'{s})")
+    if xlabel:
+        eval(f"fig.update_xaxes(title_text='{xlabel}'{s})")
+    if xrange:
+        eval(f"fig.update_xaxes(range={xrange}{s})")
+    if ylabel:
+        eval(f"fig.update_yaxes(title_text='{ylabel}'{s})")
+    if yrange:
+        eval(f"fig.update_yaxes(range={yrange}{s})")
