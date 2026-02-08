@@ -11,6 +11,7 @@ SETS = {
     "WoE": "olivedrab",
     "GR": "red",
     "AS": "gold",
+    "PV": "purple",
 }
 
 HOUSES = {
@@ -27,6 +28,7 @@ HOUSES = {
     "ekwidon": "red",
     "geistoid": "black",
     "skyborn": "lightsteelblue",
+    "redemption": "silver",
 }
 
 

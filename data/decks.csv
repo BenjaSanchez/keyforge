@@ -6,10 +6,10 @@ A3,Amoryork of the Baker's chapel,CotA,mars,brobnar,sanctum,66,2020-02-02
 A4,Boaros of the Supplicant's Forest,CotA,untamed,brobnar,dis,63,2020-06-03
 A5,The Opalescent Number of Roundtable,CotA,untamed,logos,sanctum,60,2020-08-29
 A6,"H. Price, Southmount's Reasonable Zealot",CotA,sanctum,logos,dis,66,2020-08-29
-A7,"Reyes, the Tracker of Dwartown",CotA,mars,brobnar,shadows,61,2024-07-21
-A8,The Partisan that Unifies Agreements,CotA,shadows,brobnar,dis,71,2024-07-21
+A7,"Reyes, the Tracker of Dwartown",CotA,mars,brobnar,shadows,60,2024-07-21
+A8,The Partisan that Unifies Agreements,CotA,shadows,brobnar,dis,70,2024-07-21
 A9,Kite Rojas,CotA,mars,shadows,dis,58,2024-07-21
-B0,He that Betrays Fun,AoA,shadows,logos,brobnar,56,2020-02-02
+B0,He that Betrays Fun,AoA,shadows,logos,brobnar,57,2020-02-02
 B1,"Zerra ""Director Slush"" Higa",AoA,untamed,mars,dis,60,2020-02-02
 B2,The moldy misteress,AoA,untamed,brobnar,sanctum,55,2020-02-02
 B3,"Al-Battani, the Telepathist of Study",AoA,untamed,mars,shadows,58,2020-03-11
@@ -17,13 +17,13 @@ B4,"Artemis, Moon Ape",AoA,untamed,mars,dis,53,2020-03-11
 B5,Vaughn “Upload” Autotean,AoA,untamed,brobnar,sanctum,52,2020-06-03
 B6,"Vhexh, Naysayer of the Awful Shop",AoA,mars,logos,dis,58,2020-07-23
 C0,Bramble of Farhenge Alleyway,WC,untamed,shadows,dis,64,2020-02-02
-C1,Patchery the Pessimistic,WC,untamed,logos,brobnar,49,2020-02-02
+C1,Patchery the Pessimistic,WC,untamed,logos,brobnar,50,2020-02-02
 C2,"Darkcreep, It that Misinterprets the Peak",WC,shadows,logos,dis,82,2020-02-02
 C3,The Turncoat that Conceives Suffering,WC,untamed,logos,brobnar,70,2020-06-03
 C4,Adviser Breanna Bittail,WC,shadows,star alliance,dis,58,2020-06-03
 C5,Hygelac “Axe” Blazefox,WC,brobnar,star alliance,dis,58,2020-06-03
 C6,"Exixia, Spawn of Flexiloud",WC,saurian,logos,dis,76,2020-06-21
-C7,"F. Jesperson, Unigus's Trivial Overlord",WC,saurian,brobnar,dis,64,2024-07-21
+C7,"F. Jesperson, Unigus's Trivial Overlord",WC,saurian,brobnar,dis,61,2024-07-21
 D0,The Dr. of Mandigopolis,MM,untamed,logos,sanctum,60,2020-08-03
 D1,"Jarbuilder, the Ringleader of the Citadel",MM,saurian,logos,sanctum,66,2020-08-03
 D2,Perutz the Intensily Hot,MM,saurian,star alliance,shadows,65,2020-08-03
@@ -36,13 +36,21 @@ E2,"Jeffrys, the Writer of Sculpture",DT,saurian,logos,sanctum,63,2021-05-02
 E3,Steward Miles Jagayouth,DT,untamed,shadows,sanctum,69,2021-05-02
 F0,"Judah ""No relation"" Restudusa",WoE,mars,star alliance,ekwidon,64,2023-10-25
 F1,Ayya Q. Oniawhirl,WoE,saurian,star alliance,unfathomable,70,2023-10-25
-F2,"Trunkusk Mertens, the Psychic and Untidy",WoE,mars,star alliance,saurian,81,2023-10-25
-F3,"Sai ""Lighteater"" Fishwick",WoE,mars,ekwidon,unfathomable,77,2023-10-25
-G0,The Despot of Bomsini,GR,mars,untamed,star alliance,67,2024-10-20
+F2,"Trunkusk Mertens, the Psychic and Untidy",WoE,mars,star alliance,saurian,79,2023-10-25
+F3,"Sai ""Lighteater"" Fishwick",WoE,mars,ekwidon,unfathomable,76,2023-10-25
+F4,"The Cryptic Malcontent of Knockwood",WoE,saurian,sanctum,unfathomable,76,2025-05-20
+F5,"The Knight who Swings at the Wild Hunt",WoE,saurian,sanctum,unfathomable,70,2025-05-20
+G0,The Despot of Bomsini,GR,mars,untamed,star alliance,68,2024-10-20
 G1,"Zipmachine, the Troll Sun",GR,unfathomable,ekwidon,untamed,75,2024-10-20
 G2,Cambiadrop of the Daughter's Cliff,GR,untamed,brobnar,unfathomable,83,2024-10-20
-G3,"Porshedevil, the Praefectus Aeronaut",GR,brobnar,ekwidon,mars,78,2024-10-20
+G3,"Porshedevil, the Praefectus Aeronaut",GR,brobnar,ekwidon,mars,77,2024-10-20
 H0,"Valle, Huxpines’s Scaremonger",AS,dis,mars,skyborn,75,2024-11-09
-H1,"Swordvian Shallows-de Toeni, Underling",AS,geistoid,ekwidon,brobnar,87,2024-11-09
+H1,"Swordvian Shallows-de Toeni, Underling",AS,geistoid,ekwidon,brobnar,82,2024-11-09
 H2,Xzx. Ipsisiege Shuurga,AS,skyborn,dis,brobnar,76,2024-11-09
-H3,Rósa Fionsidh from the Hero’s Retreat,AS,ekwidon,mars,dis,63,2024-11-09
+H3,Rósa Fionsidh from the Hero’s Retreat,AS,ekwidon,mars,dis,62,2024-11-09
+I0,"Mortician Clemente Soniido",PV,untamed,redemption,shadows,78,2025-05-20
+I1,"Misa, Mercenary of the Sinister Moors",PV,star alliance,shadows,dis,81,2025-05-20
+I2,"Rosetryon, the ""Misfit"" of Calculus",PV,shadows,sanctum,logos,94,2025-05-20
+I3,"Anthroacid, the Prodigy Enticer",PV,star alliance,shadows,redemption,79,2025-05-20
+I4,"H. Tsana, the Atrium Envoy",PV,saurian,logos,untamed,90,2025-05-20
+I5,"Faustus J. Thaflattery, the Twelfth",PV,star alliance,shadows,redemption,82,2025-05-20
