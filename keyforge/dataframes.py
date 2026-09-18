@@ -3,15 +3,16 @@ import pandas as pd
 
 
 SETS = {
-    "CotA": "firebrick",
-    "AoA": "mediumblue",
-    "WC": "darkviolet",
-    "MM": "black",
-    "DT": "deepskyblue",
-    "WoE": "olivedrab",
-    "GR": "red",
-    "AS": "gold",
-    "PV": "purple",
+    "CotA": "firebrick",  # Call of the Archons
+    "AoA": "mediumblue",  # Age of Ascension
+    "WC": "darkviolet",  # Worlds Collide
+    "MM": "black",  # Mass Mutation
+    "DT": "deepskyblue",  # Dark Tidings
+    "WoE": "olivedrab",  # Winds of Exchange
+    "GR": "red",  # Grim Reminders
+    "AS": "gold",  # Aember Skies
+    "PV": "purple",  # Prophetic Visions
+    "DM": "darkorange",  # Draconian Measures
 }
 
 HOUSES = {
@@ -29,6 +30,7 @@ HOUSES = {
     "geistoid": "black",
     "skyborn": "lightsteelblue",
     "redemption": "silver",
+    "ouboros": "darkred",
 }
 
 
