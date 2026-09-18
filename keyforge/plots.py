@@ -286,8 +286,8 @@ def plot_set_trends(set_df):
 
     # Customize plots:
     fig.update_layout(height=600, width=1500, legend_title_text="Sets")
-    scatter_settings(fig, xlabel="SAS", xrange=[50, 80], ylabel="Win Rate [%]", yrange=[0, 100], column=1)
-    scatter_settings(fig, ylabel="SAS", yrange=[50, 80], column=2)
+    scatter_settings(fig, xlabel="SAS", xrange=[50, 90], ylabel="Win Rate [%]", yrange=[0, 100], column=1)
+    scatter_settings(fig, ylabel="SAS", yrange=[50, 90], column=2)
     scatter_settings(fig, ylabel="Win Rate [%]", yrange=[0, 100], column=3)
 
     return fig
