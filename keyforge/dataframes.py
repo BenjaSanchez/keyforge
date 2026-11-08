@@ -39,10 +39,10 @@ def deck_df(path="data/decks.csv"):
     return pd.read_csv(path, index_col=0)
 
 
-def match_df(path="data/matches.csv"):
+def match_df(path="data/matches.csv", deck_path="data/decks.csv"):
     """Dataframe with all matches' information"""
     match_df = pd.read_csv(path)
-    entry_dates = pd.to_datetime(deck_df()["entry_date"])
+    entry_dates = pd.to_datetime(deck_df(deck_path)["entry_date"])
 
     # Add new columns to match df:
     for idx in match_df.index:
@@ -63,8 +63,8 @@ def set_house_df(deck_df):
     set_house_df = pd.DataFrame(0, index=SETS.keys(), columns=HOUSES.keys())
 
     for _, row in deck_df.iterrows():
-        for house in row[2:5]:
-            set_house_df.loc[row[1], house] += 1
+        for house in (row["house1"], row["house2"], row["house3"]):
+            set_house_df.loc[row["set"], house] += 1
     
     return set_house_df
 
@@ -74,8 +74,8 @@ def match_hm(deck_df, match_df):
     match_hm = pd.DataFrame(index=deck_df.index, columns=deck_df.index)
 
     for _, row in match_df.iterrows():
-        match_hm.loc[row[1], row[2]] = row[3]
-        match_hm.loc[row[2], row[1]] = row[4]
+        match_hm.loc[row["id1"], row["id2"]] = row["k1"]
+        match_hm.loc[row["id2"], row["id1"]] = row["k2"]
     match_hm.fillna(-1, inplace=True)
     
     return match_hm

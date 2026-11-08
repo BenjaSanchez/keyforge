@@ -95,7 +95,8 @@ def plot_deck_stats(deck_df):
     
     data = deck_df.iloc[:,[7, 11, 12, 13]]
     data.index = [
-        f"{idx}: {row[0]} ({row[1]} - {row[2]} / {row[3]} / {row[4]})" for idx, row in deck_df.iterrows()
+        f"{idx}: {row['name']} ({row['set']} - {row['house1']} / {row['house2']} / {row['house3']})"
+        for idx, row in deck_df.iterrows()
     ]
     fig = px.imshow(
         data,

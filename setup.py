@@ -10,5 +10,7 @@ setup(
     name="keyforge",
     description="Analyze keyforge match data",
     packages=find_packages(),
+    package_data={"keyforge": ["assets/*.html", "assets/*.css"]},
     install_requires=requirements,
+    entry_points={"console_scripts": ["keyforge-dashboard=keyforge.main:main"]},
 )
