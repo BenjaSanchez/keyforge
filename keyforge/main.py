@@ -38,7 +38,6 @@ def load_analysis():
     figures = [
         ("Deck overview", plots.plot_deck_overview(deck_df)),
         ("Changes over time", plots.plot_time_changes(match_df)),
-        ("Match results", plots.plot_match_results(match_hm)),
         ("Deck statistics", plots.plot_deck_stats(deck_df)),
         ("Win rate vs SAS", plots.plot_win_vs_sas(deck_df)),
         (
@@ -51,6 +50,7 @@ def load_analysis():
             plots.plot_group_heatmaps(set_df, set_plays_hm, set_wins_hm),
         ),
         ("Set trends", plots.plot_set_trends(set_df)),
+        ("Match results", plots.plot_match_results(match_hm)),
     ]
     return figures, deck_df, match_df, match_hm, set_plays_hm
 
