@@ -3,14 +3,16 @@ import pandas as pd
 
 
 SETS = {
-    "CotA": "firebrick",
-    "AoA": "mediumblue",
-    "WC": "darkviolet",
-    "MM": "black",
-    "DT": "deepskyblue",
-    "WoE": "olivedrab",
-    "GR": "red",
-    "AS": "gold",
+    "CotA": "firebrick",  # Call of the Archons
+    "AoA": "mediumblue",  # Age of Ascension
+    "WC": "darkviolet",  # Worlds Collide
+    "MM": "black",  # Mass Mutation
+    "DT": "deepskyblue",  # Dark Tidings
+    "WoE": "olivedrab",  # Winds of Exchange
+    "GR": "red",  # Grim Reminders
+    "AS": "gold",  # Aember Skies
+    "PV": "purple",  # Prophetic Visions
+    "DM": "darkorange",  # Draconian Measures
 }
 
 HOUSES = {
@@ -27,23 +29,26 @@ HOUSES = {
     "ekwidon": "red",
     "geistoid": "black",
     "skyborn": "lightsteelblue",
+    "redemption": "silver",
+    "ouboros": "darkred",
 }
 
 
-def deck_df(path="./decks.csv"):
+def deck_df(path="data/decks.csv"):
     """Dataframe with all deck information"""
     return pd.read_csv(path, index_col=0)
 
 
-def match_df(path="./matches.csv"):
+def match_df(path="data/matches.csv", deck_path="data/decks.csv"):
     """Dataframe with all matches' information"""
     match_df = pd.read_csv(path)
-    entry_dates = pd.to_datetime(deck_df()["entry_date"])
+    entry_dates = pd.to_datetime(deck_df(deck_path)["entry_date"])
 
     # Add new columns to match df:
     for idx in match_df.index:
         cumulative_matches = idx + 1
-        num_decks = sum([pd.to_datetime(match_df.loc[idx, "date"]) >= d for d in entry_dates])
+        match_df.loc[idx, "time"] = pd.to_datetime(match_df.loc[idx, "date"])
+        num_decks = sum([match_df.loc[idx, "time"] >= d for d in entry_dates])
         possible_matches = num_decks * (num_decks - 1) / 2
         match_df.loc[idx, "cumulative_matches"] = int(cumulative_matches)
         match_df.loc[idx, "number_decks"] = int(num_decks)
@@ -58,8 +63,8 @@ def set_house_df(deck_df):
     set_house_df = pd.DataFrame(0, index=SETS.keys(), columns=HOUSES.keys())
 
     for _, row in deck_df.iterrows():
-        for house in row[2:5]:
-            set_house_df.loc[row[1], house] += 1
+        for house in (row["house1"], row["house2"], row["house3"]):
+            set_house_df.loc[row["set"], house] += 1
     
     return set_house_df
 
@@ -69,8 +74,8 @@ def match_hm(deck_df, match_df):
     match_hm = pd.DataFrame(index=deck_df.index, columns=deck_df.index)
 
     for _, row in match_df.iterrows():
-        match_hm.loc[row[1], row[2]] = row[3]
-        match_hm.loc[row[2], row[1]] = row[4]
+        match_hm.loc[row["id1"], row["id2"]] = row["k1"]
+        match_hm.loc[row["id2"], row["id1"]] = row["k2"]
     match_hm.fillna(-1, inplace=True)
     
     return match_hm

@@ -1,0 +1,182 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+header {
+  padding: 2rem clamp(1rem, 5vw, 4rem);
+  color: white;
+  background: linear-gradient(120deg, #0f172a, #312e81 55%, #4338ca);
+}
+
+header p {
+  margin: 0 0 .5rem;
+  color: #a5b4fc;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+main {
+  max-width: 1600px;
+  margin: auto;
+  padding: 2rem clamp(1rem, 3vw, 2rem);
+}
+
+.chart {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: white;
+  box-shadow: 0 6px 20px rgb(15 23 42 / 5%);
+}
+
+.chart h2 {
+  margin: 0 0 1rem;
+  color: #0f172a;
+}
+
+.data-section {
+  margin-top: 2rem;
+}
+
+.data-section h2 {
+  color: #0f172a;
+}
+
+.data-section details {
+  margin-bottom: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  background: white;
+}
+
+.data-section summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.table-scroll {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #334155;
+}
+
+.data-table th {
+  background: #eef2ff;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.data-table th,
+.data-table td {
+  min-width: 120px;
+  max-width: 280px;
+  padding: .75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  white-space: normal;
+}
+
+.next-match {
+  margin-bottom: 2rem;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  background: white;
+  box-shadow: 0 10px 30px rgb(15 23 42 / 8%);
+}
+
+.next-match-heading {
+  margin-bottom: 1.5rem;
+}
+
+.next-match-heading .eyebrow {
+  margin: 0;
+  color: #6366f1;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+}
+
+.next-match-heading h2 {
+  margin: .4rem 0 0;
+  color: #0f172a;
+}
+
+.matchup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.deck-card {
+  flex: 1 1 320px;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  color: #f8fafc;
+  background: linear-gradient(145deg, #1e293b, #312e81);
+  box-shadow: 0 12px 30px rgb(30 41 59 / 18%);
+}
+
+.deck-id {
+  color: #818cf8;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.deck-card h3 {
+  margin: .35rem 0 0;
+}
+
+.deck-card p {
+  margin: .8rem 0 1.2rem;
+  color: #cbd5e1;
+  text-transform: capitalize;
+}
+
+.deck-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.deck-stats div {
+  display: grid;
+  gap: .15rem;
+}
+
+.deck-stats small {
+  color: #cbd5e1;
+}
+
+.versus {
+  color: #6366f1;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+@media (max-width: 500px) {
+  .next-match {
+    padding: 1.25rem;
+  }
+
+  .deck-stats {
+    gap: 1.25rem;
+  }
+}
